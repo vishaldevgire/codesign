@@ -61,4 +61,4 @@ task :test => [:clean] do
   cp_r "#{unsigned_bin_dir}/.", "#{signed_bin_dir}"
 end
 
-task :default => [:ubuntu]
+task :default => [:centos]
