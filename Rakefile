@@ -11,14 +11,22 @@ require 'pathname'
 # password = 'password'
 # unsigned_bin_location = "./unsigned"
 
+
+# Expects
+#   input:
+#     ${UNSIGNED_BIN_DIRECTORY} - directory containing of binaries to be signed e.g. .../rpm
+#     ${SIGNED_BIN_DIRECTORY} - directory where signed binaries will be copied
+#     ${GPG_SIGNING_KEY_ID} - id of the key using which binaries are signed
+#     ${GNUPGHOME} - path to .gnupg directory
+
 ENV['UNSIGNED_BIN_DIRECTORY'] || (raise "UNSIGNED_BIN_DIRECTORY is not set. e.g. /mydir/unsigned")
 ENV['SIGNED_BIN_DIRECTORY'] || (raise "SIGNED_BIN_DIRECTORY is not set. e.g. /mydir/signed")
 ENV['GPG_SIGNING_KEY_ID'] || (raise "GPG_SIGNING_KEY_ID is not set. e.g. 7722C545")
+ENV['GNUPGHOME'] || (raise "GNUPGHOME is not set, this is the path to .gnupg directory e.g. 7722C545")
 
 unsigned_bin_dir   = Pathname.new(ENV['UNSIGNED_BIN_DIRECTORY']).expand_path
 signed_bin_dir     = Pathname.new(ENV['SIGNED_BIN_DIRECTORY']).expand_path
 gpg_signing_key_id = ENV['GPG_SIGNING_KEY_ID']
-
 
 task :clean do
   rm_rf "#{signed_bin_dir}"
