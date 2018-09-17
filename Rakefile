@@ -43,16 +43,28 @@ task :ubuntu => [:clean] do
   sh("dpkg-sig --verbose --verify #{signed_bin_dir}/*.deb")
 end
 
+# task :zip => [:clean] do
+#   unsigned_bin_dir
+#       .children.select {|path| path.basename.extname == '.zip'}
+#       .each do |file|
+#     _asc = "#{signed_bin_dir.join(file.basename)}.asc"
+#     sh("gpg --default-key #{gpg_signing_key_id} --armor --detach-sign --sign --output #{_asc} #{file}")
+#     cp "#{file}", "#{signed_bin_dir.join(file.basename)}"
+#     sh("gpg --default-key #{gpg_signing_key_id} --verify #{_asc}")
+#   end
+# end
+
 task :zip => [:clean] do
-  unsigned_bin_dir
+  cp_r "#{unsigned_bin_dir}/.", "#{signed_bin_dir}"
+  signed_bin_dir
       .children.select {|path| path.basename.extname == '.zip'}
       .each do |file|
-    _asc = "#{signed_bin_dir.join(file.basename)}.asc"
-    sh("gpg --default-key #{gpg_signing_key_id} --armor --detach-sign --sign --output #{_asc} #{file}")
-    cp "#{file}", "#{signed_bin_dir.join(file.basename)}"
-    sh("gpg --default-key #{gpg_signing_key_id} --verify #{_asc}")
-  end
+        sig = "#{file}.asc"
+        sh("gpg --default-key #{gpg_signing_key_id} --armor --detach-sign --sign --output #{sig} #{file}")
+        sh("gpg --default-key #{gpg_signing_key_id} --verify #{sig}")
+      end
 end
+
 
 task :test => [:clean] do
   puts "#{gpg_signing_key_id}"
@@ -61,4 +73,4 @@ task :test => [:clean] do
   cp_r "#{unsigned_bin_dir}/.", "#{signed_bin_dir}"
 end
 
-task :default => [:centos]
+task :default => [:test]
